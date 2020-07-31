@@ -1,0 +1,66 @@
+﻿@{
+    ViewBag.Title = "ASP.NET MVC 视频上传";
+}
+
+
+<link href="~/Content/layer-v3.1.1/layer/theme/default/layer.css" rel="stylesheet" />
+<link href="~/Content/layui-v2.4.5/css/layui.css" rel="stylesheet" />
+
+<div class="jumbotron" style="margin-top: 200px;">
+    <h3><a href="https://www.cnblogs.com/Can-daydayup/">追逐时光者的ASP.NET MVC+LayUI视频上传教程</a></h3>
+    <div class="row" style="margin-top: 20px;">
+        <div class="form-group znStyle">
+            <label class="col-sm-2 control-label"><em class="zent-form__required">*</em>视频上传：</label>
+            <div class="col-sm-6">
+                <div id="upload_all_file">
+                    <div class="layui-upload">
+                        <button type="button" class="layui-btn" id="VideoBtn"><i class="layui-icon">&#xe67c;</i>上传视频</button>
+                        <input type="hidden" name="Video" id="Video" />
+                        <div class="layui-upload-list" id="videoPlay">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/Content/layer-v3.1.1/layer/layer.js"></script>
+<script src="~/Content/layui-v2.4.5/layui.js"></script>
+
+
+<!--layer.js视频上传-->
+<script type="text/javascript">
+    var upload;
+    //上传图片
+    layui.use('upload', function () {
+        upload = layui.upload;
+
+        upload.render({
+            before: function () {
+                layer.msg('视频努力上传中,请耐心等待...', { icon: 16, shade: 0.8, time: false });
+            },
+            elem: '#VideoBtn'
+            , url: '@Url.Action("FileLoad","FileUpload")'
+            , accept: 'video' //视频
+            , exts: 'mp4'//只允许上传的后缀(mp4文件)
+            , done: function (res) {
+                console.log(res);
+                layer.closeAll();
+                layer.msg(res.msg);
+                if (res.code == 1) {
+                    $("#Video").val(res.path);
+                    $("#videoPlay").html('<video controls="controls" id="currentVideo" style="width:400px;"><source src="' + res.path + '" type="video/mp4" /></video>');
+                    $("#videoPlay").show();
+                    // 自动播放
+                    $("#currentVideo")[0].play();
+                }
+            }
+        });
+
+
+        $(".layui-upload-list").on("click", "i", function () {
+            $(this).parent().remove();
+        });
+    });
+</script>
